@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campus.trade.mapper.TradeOrderMapper">
+
+    <sql id="orderSelect">
+        SELECT o.*, g.title AS goods_title, g.images AS goods_images,
+               b.nickname AS buyer_nickname, s.nickname AS seller_nickname
+        FROM trade_order o
+        JOIN goods g ON o.goods_id = g.goods_id
+        JOIN sys_user b ON o.buyer_id = b.user_id
+        JOIN sys_user s ON o.seller_id = s.user_id
+    </sql>
+
+    <select id="findById" resultType="TradeOrder">
+        <include refid="orderSelect"/>
+        WHERE o.order_id = #{orderId}
+    </select>
+
+    <select id="findByUser" resultType="TradeOrder">
+        <include refid="orderSelect"/>
+        <where>
+            <if test="role == 'buyer'">o.buyer_id = #{userId}</if>
+            <if test="role == 'seller'">o.seller_id = #{userId}</if>
+            <if test="role == 'all'">(o.buyer_id = #{userId} OR o.seller_id = #{userId})</if>
+        </where>
+        ORDER BY o.create_time DESC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="orderId">
+        INSERT INTO trade_order(order_no, goods_id, buyer_id, seller_id, amount, delivery_type, address, status)
+        VALUES(#{orderNo}, #{goodsId}, #{buyerId}, #{sellerId}, #{amount}, #{deliveryType}, #{address}, #{status})
+    </insert>
+
+    <update id="updateStatus">
+        UPDATE trade_order SET status = #{status} WHERE order_id = #{orderId}
+    </update>
+
+    <update id="completeOrder">
+        UPDATE trade_order SET status = 2, finish_time = NOW() WHERE order_id = #{orderId} AND status = 1
+    </update>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM trade_order
+    </select>
+</mapper>

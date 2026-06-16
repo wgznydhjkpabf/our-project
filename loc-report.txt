@@ -1,0 +1,27 @@
+Campus-Trade Lines of Code Report
+
+=== BACKEND (backend/src, exclude target/) ===
+Extensions: .java, .xml, .yml
+
+By file type:
+  .java - Files: 41, Lines: 1733
+  .xml  - Files: 7, Lines: 281
+  .yml  - Files: 1, Lines: 28
+
+Backend total files: 49
+Backend total lines: 2042
+
+=== FRONTEND (frontend/src, exclude node_modules/) ===
+Extensions: .jsx, .js, .css
+
+By file type:
+  .jsx  - Files: 14, Lines: 802
+  .js   - Files: 2, Lines: 109
+  .css  - Files: 1, Lines: 100
+
+Frontend total files: 17
+Frontend total lines: 1011
+
+=== GRAND TOTAL ===
+Total files: 66
+Total lines: 3053
