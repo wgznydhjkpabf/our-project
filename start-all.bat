@@ -5,7 +5,7 @@ echo   校园二手交易平台 - 一键启动
 echo ========================================
 
 echo [1/3] 初始化数据库...
-mysql -u root -p123456 < "%~dp0sql\init.sql"
+mysql -u root -p58612497aA < "%~dp0sql\init.sql"
 if %errorlevel% neq 0 (
     echo [警告] 数据库初始化失败（可能已存在），继续启动...
 )
