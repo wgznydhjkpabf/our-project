@@ -37,6 +37,8 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   min-height: 100%;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
 }
 
 #root {
@@ -101,7 +103,7 @@ h5 {
   background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 40%, #7c3aed 100%);
   color: #fff;
   border-radius: var(--radius-lg);
-  padding: 48px 56px 56px;
+  padding: 84px 56px 56px;
   margin-bottom: 24px;
   box-shadow: var(--shadow-lg);
   position: relative;
@@ -640,9 +642,13 @@ h5 {
   justify-content: space-between;
   gap: 24px;
   box-shadow: 0 2px 12px rgba(15, 23, 42, 0.08);
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .nav-logo {
@@ -746,6 +752,25 @@ h5 {
 .nav-user-area .logout-btn:hover {
   background: rgba(239, 68, 68, 0.28);
   color: #fecaca;
+}
+
+.nav-user-area .user-name-link {
+  color: #fff;
+  font-weight: 600;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nav-user-area .user-name-link:hover {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
 }
 
 /* ===== 表单元素 ===== */

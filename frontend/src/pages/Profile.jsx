@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Card, Form, Input, Button, Table, Switch, Tag, message, Row, Col, Divider } from 'antd'
-import { UserOutlined, PhoneOutlined, EnvironmentOutlined, StarFilled, SaveOutlined, DeleteOutlined } from '@ant-design/icons'
+import { UserOutlined, PhoneOutlined, EnvironmentOutlined, StarFilled, SaveOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 import { getProfile, updateProfile, getAddresses, saveAddress, deleteAddress } from '../api'
 
 export default function Profile() {

@@ -54,7 +54,7 @@ export default function NavBar() {
       <div className="nav-user-area">
         {token ? (
           <>
-            <Link to="/profile" className="nav-link">👤 {nickname || '个人中心'}</Link>
+            <Link to="/profile" className="nav-link user-name-link">👤 {nickname || '个人中心'}</Link>
             <span className="logout-btn" style={{ cursor: 'pointer' }} onClick={logout}>退出</span>
           </>
         ) : (
