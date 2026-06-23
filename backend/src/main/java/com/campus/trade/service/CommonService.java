@@ -1,15 +1,12 @@
 package com.campus.trade.service;
 
 import com.campus.trade.common.BusinessException;
-import com.campus.trade.dto.MessageRequest;
 import com.campus.trade.entity.Category;
 import com.campus.trade.entity.User;
 import com.campus.trade.entity.UserAddress;
-import com.campus.trade.entity.UserMessage;
 import com.campus.trade.mapper.AddressMapper;
 import com.campus.trade.mapper.CategoryMapper;
 import com.campus.trade.mapper.GoodsMapper;
-import com.campus.trade.mapper.MessageMapper;
 import com.campus.trade.mapper.TradeOrderMapper;
 import com.campus.trade.mapper.UserMapper;
 import org.springframework.stereotype.Service;
@@ -23,17 +20,15 @@ import java.util.Map;
 public class CommonService {
 
     private final CategoryMapper categoryMapper;
-    private final MessageMapper messageMapper;
     private final AddressMapper addressMapper;
     private final UserMapper userMapper;
     private final GoodsMapper goodsMapper;
     private final TradeOrderMapper orderMapper;
 
-    public CommonService(CategoryMapper categoryMapper, MessageMapper messageMapper,
-                         AddressMapper addressMapper, UserMapper userMapper,
-                         GoodsMapper goodsMapper, TradeOrderMapper orderMapper) {
+    public CommonService(CategoryMapper categoryMapper, AddressMapper addressMapper,
+                         UserMapper userMapper, GoodsMapper goodsMapper,
+                         TradeOrderMapper orderMapper) {
         this.categoryMapper = categoryMapper;
-        this.messageMapper = messageMapper;
         this.addressMapper = addressMapper;
         this.userMapper = userMapper;
         this.goodsMapper = goodsMapper;
@@ -54,26 +49,6 @@ public class CommonService {
 
     public void deleteCategory(Integer categoryId) {
         categoryMapper.delete(categoryId);
-    }
-
-    public List<UserMessage> inbox(Long userId) {
-        return messageMapper.findInbox(userId);
-    }
-
-    public List<UserMessage> conversation(Long userId, Long peerId) {
-        return messageMapper.findConversation(userId, peerId);
-    }
-
-    public void sendMessage(Long senderId, MessageRequest request) {
-        if (senderId.equals(request.getReceiverId())) {
-            throw new BusinessException("不能给自己发消息");
-        }
-        UserMessage message = new UserMessage();
-        message.setSenderId(senderId);
-        message.setReceiverId(request.getReceiverId());
-        message.setGoodsId(request.getGoodsId());
-        message.setContent(request.getContent());
-        messageMapper.insert(message);
     }
 
     public List<UserAddress> addresses(Long userId) {

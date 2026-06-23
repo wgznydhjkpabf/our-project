@@ -24,4 +24,6 @@ public interface UserMapper {
     int countAll();
 
     java.util.List<User> findAll();
+
+    java.util.List<User> searchByNickname(@Param("keyword") String keyword);
 }

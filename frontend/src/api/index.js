@@ -20,8 +20,10 @@ export const completeOrder = id => request.put(`/api/orders/${id}/complete`)
 export const reviewOrder = data => request.post('/api/orders/review', data)
 
 export const getMessages = () => request.get('/api/messages')
+export const getConversations = () => request.get('/api/messages/conversations')
 export const getConversation = peerId => request.get(`/api/messages/${peerId}`)
 export const sendMessage = data => request.post('/api/messages', data)
+export const searchUsers = keyword => request.get('/api/users/search', { params: { keyword } })
 
 export const getAddresses = () => request.get('/api/addresses')
 export const saveAddress = data => request.post('/api/addresses', data)
