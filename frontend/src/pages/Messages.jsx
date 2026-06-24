@@ -38,6 +38,7 @@ export default function Messages() {
     setPeerId(id)
     setPeerName(name)
     loadChat(id)
+    loadInbox()
   }
 
   const startNewChat = () => {
