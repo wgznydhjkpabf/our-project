@@ -27,7 +27,13 @@
             <if test="status != null">AND g.status = #{status}</if>
             <if test="userId != null">AND g.user_id = #{userId}</if>
         </where>
-        ORDER BY g.create_time DESC
+        <choose>
+            <when test="sortBy == 'time'">ORDER BY g.create_time DESC</when>
+            <when test="sortBy == 'price_asc'">ORDER BY g.price ASC, g.create_time DESC</when>
+            <when test="sortBy == 'price_desc'">ORDER BY g.price DESC, g.create_time DESC</when>
+            <when test="sortBy == 'view_count'">ORDER BY g.view_count DESC, g.create_time DESC</when>
+            <otherwise>ORDER BY g.create_time DESC</otherwise>
+        </choose>
         LIMIT #{offset}, #{limit}
     </select>
 

@@ -15,16 +15,18 @@ export default function Home() {
   const [list, setList] = useState([]);
   const [keyword, setKeyword] = useState("");
   const [categoryId, setCategoryId] = useState(undefined);
+  const [sortBy, setSortBy] = useState(undefined);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const size = 16;
 
-  const load = async (p = page, cat = categoryId, kw = keyword) => {
+  const load = async (p = page, cat = categoryId, kw = keyword, sort = sortBy) => {
     try {
       const data = await getGoodsList({
         keyword: kw || undefined,
         categoryId: cat,
         status: 1,
+        sortBy: sort || undefined,
         page: p,
         size,
       });
@@ -43,8 +45,8 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    load(page, categoryId, keyword);
-  }, [page, categoryId]);
+    load(page, categoryId, keyword, sortBy);
+  }, [page, categoryId, sortBy]);
 
   const search = () => {
     setPage(1);
@@ -101,6 +103,23 @@ export default function Home() {
           value={categoryId}
           onChange={(val) => {
             setCategoryId(val);
+            setPage(1);
+          }}
+        />
+        <span className="filter-label" style={{ marginLeft: 24 }}>📊 排序方式：</span>
+        <Select
+          allowClear
+          placeholder="默认排序"
+          style={{ minWidth: 140 }}
+          options={[
+            { value: 'time', label: '⏰ 最新发布' },
+            { value: 'price_asc', label: '💰 价格从低到高' },
+            { value: 'price_desc', label: '💎 价格从高到低' },
+            { value: 'view_count', label: '🔥 浏览量最高' },
+          ]}
+          value={sortBy}
+          onChange={(val) => {
+            setSortBy(val);
             setPage(1);
           }}
         />

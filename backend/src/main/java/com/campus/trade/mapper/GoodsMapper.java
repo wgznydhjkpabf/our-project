@@ -13,6 +13,7 @@ public interface GoodsMapper {
                        @Param("categoryId") Integer categoryId,
                        @Param("status") Integer status,
                        @Param("userId") Long userId,
+                       @Param("sortBy") String sortBy,
                        @Param("offset") int offset,
                        @Param("limit") int limit);
 

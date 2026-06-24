@@ -7,6 +7,7 @@ import com.campus.trade.entity.MessageType;
 import com.campus.trade.mapper.GoodsMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,9 +24,13 @@ public class GoodsService {
     }
 
     public Map<String, Object> list(String keyword, Integer categoryId, Integer status,
-                                    Long userId, int page, int size) {
+                                    Long userId, String sortBy, int page, int size) {
         int offset = (page - 1) * size;
-        List<Goods> list = goodsMapper.search(keyword, categoryId, status, userId, offset, size);
+        List<String> allowedSortBy = Arrays.asList("time", "price_asc", "price_desc", "view_count");
+        if (!allowedSortBy.contains(sortBy)) {
+            sortBy = null;
+        }
+        List<Goods> list = goodsMapper.search(keyword, categoryId, status, userId, sortBy, offset, size);
         int total = goodsMapper.countSearch(keyword, categoryId, status, userId);
         Map<String, Object> result = new HashMap<>();
         result.put("list", list);

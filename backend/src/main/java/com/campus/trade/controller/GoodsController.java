@@ -25,12 +25,13 @@ public class GoodsController {
                                              @RequestParam(required = false) Integer categoryId,
                                              @RequestParam(required = false) Integer status,
                                              @RequestParam(required = false) Long userId,
+                                             @RequestParam(required = false) String sortBy,
                                              @RequestParam(defaultValue = "1") int page,
                                              @RequestParam(defaultValue = "10") int size) {
         if (status == null) {
             status = 1;
         }
-        return Result.ok(goodsService.list(keyword, categoryId, status, userId, page, size));
+        return Result.ok(goodsService.list(keyword, categoryId, status, userId, sortBy, page, size));
     }
 
     @GetMapping("/{id}")
