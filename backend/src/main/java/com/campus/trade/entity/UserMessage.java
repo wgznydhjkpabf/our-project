@@ -7,16 +7,11 @@ public class UserMessage {
     private Long senderId;
     private Long receiverId;
     private Long goodsId;
-    private Long orderId;
-    private Integer messageType;
     private String content;
     private Integer isRead;
     private LocalDateTime createTime;
     private String senderNickname;
     private String receiverNickname;
-    private String senderAvatar;
-    private String goodsTitle;
-    private Integer unreadCount;
 
     public Long getMessageId() { return messageId; }
     public void setMessageId(Long messageId) { this.messageId = messageId; }
@@ -26,10 +21,6 @@ public class UserMessage {
     public void setReceiverId(Long receiverId) { this.receiverId = receiverId; }
     public Long getGoodsId() { return goodsId; }
     public void setGoodsId(Long goodsId) { this.goodsId = goodsId; }
-    public Long getOrderId() { return orderId; }
-    public void setOrderId(Long orderId) { this.orderId = orderId; }
-    public Integer getMessageType() { return messageType; }
-    public void setMessageType(Integer messageType) { this.messageType = messageType; }
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
     public Integer getIsRead() { return isRead; }
@@ -40,10 +31,4 @@ public class UserMessage {
     public void setSenderNickname(String senderNickname) { this.senderNickname = senderNickname; }
     public String getReceiverNickname() { return receiverNickname; }
     public void setReceiverNickname(String receiverNickname) { this.receiverNickname = receiverNickname; }
-    public String getSenderAvatar() { return senderAvatar; }
-    public void setSenderAvatar(String senderAvatar) { this.senderAvatar = senderAvatar; }
-    public String getGoodsTitle() { return goodsTitle; }
-    public void setGoodsTitle(String goodsTitle) { this.goodsTitle = goodsTitle; }
-    public Integer getUnreadCount() { return unreadCount; }
-    public void setUnreadCount(Integer unreadCount) { this.unreadCount = unreadCount; }
 }

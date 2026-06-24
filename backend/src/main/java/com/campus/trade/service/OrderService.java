@@ -4,7 +4,6 @@ import com.campus.trade.common.BusinessException;
 import com.campus.trade.dto.OrderCreateRequest;
 import com.campus.trade.dto.ReviewRequest;
 import com.campus.trade.entity.Goods;
-import com.campus.trade.entity.MessageType;
 import com.campus.trade.entity.OrderReview;
 import com.campus.trade.entity.TradeOrder;
 import com.campus.trade.mapper.GoodsMapper;
@@ -29,17 +28,15 @@ public class OrderService {
     private final OrderReviewMapper reviewMapper;
     private final UserMapper userMapper;
     private final JdbcTemplate jdbcTemplate;
-    private final MessageService messageService;
 
     public OrderService(TradeOrderMapper orderMapper, GoodsMapper goodsMapper,
                         OrderReviewMapper reviewMapper, UserMapper userMapper,
-                        JdbcTemplate jdbcTemplate, MessageService messageService) {
+                        JdbcTemplate jdbcTemplate) {
         this.orderMapper = orderMapper;
         this.goodsMapper = goodsMapper;
         this.reviewMapper = reviewMapper;
         this.userMapper = userMapper;
         this.jdbcTemplate = jdbcTemplate;
-        this.messageService = messageService;
     }
 
     @Transactional
@@ -65,11 +62,6 @@ public class OrderService {
         order.setAddress(request.getAddress());
         order.setStatus(0);
         orderMapper.insert(order);
-
-        messageService.sendSystemMessage(goods.getUserId(), goods.getGoodsId(), order.getOrderId(),
-                MessageType.ORDER_CREATE, String.format("用户 %s 购买了您的商品「%s」，请及时确认订单",
-                        userMapper.findById(buyerId).getNickname(), goods.getTitle()));
-
         return order.getOrderId();
     }
 
@@ -82,7 +74,6 @@ public class OrderService {
         return order;
     }
 
-    @Transactional
     public void confirmOrder(Long userId, Long orderId) {
         TradeOrder order = requireParticipant(userId, orderId);
         if (!order.getSellerId().equals(userId)) {
@@ -92,13 +83,8 @@ public class OrderService {
             throw new BusinessException("订单状态不允许确认");
         }
         orderMapper.updateStatus(orderId, 1);
-
-        Goods goods = goodsMapper.findById(order.getGoodsId());
-        messageService.sendSystemMessage(order.getBuyerId(), goods.getGoodsId(), order.getOrderId(),
-                MessageType.ORDER_CONFIRM, String.format("卖家已确认订单「%s」，请准备交易", goods.getTitle()));
     }
 
-    @Transactional
     public void cancelOrder(Long userId, Long orderId) {
         TradeOrder order = requireParticipant(userId, orderId);
         if (order.getStatus() >= 2) {
@@ -108,12 +94,6 @@ public class OrderService {
             throw new BusinessException(403, "无权取消");
         }
         orderMapper.updateStatus(orderId, 3);
-
-        Goods goods = goodsMapper.findById(order.getGoodsId());
-        String role = order.getBuyerId().equals(userId) ? "买家" : "卖家";
-        Long receiverId = order.getBuyerId().equals(userId) ? order.getSellerId() : order.getBuyerId();
-        messageService.sendSystemMessage(receiverId, goods.getGoodsId(), order.getOrderId(),
-                MessageType.ORDER_CANCEL, String.format("%s取消了订单「%s」", role, goods.getTitle()));
     }
 
     @Transactional
@@ -126,11 +106,6 @@ public class OrderService {
             throw new BusinessException("订单状态不允许完成");
         }
         jdbcTemplate.update("CALL sp_complete_order(?)", orderId);
-
-        Goods goods = goodsMapper.findById(order.getGoodsId());
-        Long receiverId = order.getBuyerId().equals(userId) ? order.getSellerId() : order.getBuyerId();
-        messageService.sendSystemMessage(receiverId, goods.getGoodsId(), order.getOrderId(),
-                MessageType.ORDER_COMPLETE, String.format("订单「%s」已完成，感谢您的交易", goods.getTitle()));
     }
 
     @Transactional

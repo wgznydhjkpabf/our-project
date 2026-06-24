@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Card, Form, Input, Button, Table, Switch, Tag, message, Row, Col, Divider } from 'antd'
-import { UserOutlined, PhoneOutlined, EnvironmentOutlined, StarFilled, SaveOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons'
-import { getProfile, updateProfile, getAddresses, saveAddress, deleteAddress } from '../api'
+import { Card, Form, Input, Button, Table, Switch, Tag, message, Row, Col, Divider, Modal } from 'antd'
+import { UserOutlined, PhoneOutlined, EnvironmentOutlined, StarFilled, SaveOutlined, DeleteOutlined, PlusOutlined, MailOutlined, SafetyCertificateOutlined } from '@ant-design/icons'
+import { getProfile, updateProfile, getAddresses, saveAddress, deleteAddress, sendBindEmailCode, bindEmail } from '../api'
 
 export default function Profile() {
   const [profile, setProfile] = useState({})
@@ -9,6 +9,10 @@ export default function Profile() {
   const [form] = Form.useForm()
   const [addrForm] = Form.useForm()
   const [loading, setLoading] = useState(false)
+  const [bindOpen, setBindOpen] = useState(false)
+  const [bindForm] = Form.useForm()
+  const [codeLoading, setCodeLoading] = useState(false)
+  const [countdown, setCountdown] = useState(0)
 
   const load = async () => {
     setLoading(true)
@@ -41,6 +45,36 @@ export default function Profile() {
   const removeAddr = async id => {
     await deleteAddress(id)
     message.success('已删除')
+    load()
+  }
+
+  const sendCode = async () => {
+    const email = bindForm.getFieldValue('email')
+    if (!email) {
+      message.warning('请先输入新邮箱')
+      return
+    }
+    setCodeLoading(true)
+    try {
+      await sendBindEmailCode({ email, scene: 'bind' })
+      message.success('验证码已发送（开发模式请看后端控制台）')
+      setCountdown(60)
+      const timer = setInterval(() => {
+        setCountdown(c => {
+          if (c <= 1) { clearInterval(timer); return 0 }
+          return c - 1
+        })
+      }, 1000)
+    } finally {
+      setCodeLoading(false)
+    }
+  }
+
+  const submitBind = async values => {
+    await bindEmail(values)
+    message.success('邮箱绑定成功')
+    setBindOpen(false)
+    bindForm.resetFields()
     load()
   }
 
@@ -104,8 +138,20 @@ export default function Profile() {
             <div style={{ background: '#f8fafc', borderRadius: 12, padding: 24, height: '100%' }}>
               <h3 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', marginBottom: 16 }}>📋 账户信息</h3>
               <Row gutter={[16, 12]}>
-                <Col span={24}><span style={{ color: '#64748b' }}>邮箱：</span><strong>{profile.email || '—'}</strong></Col>
-                <Col span={24}><span style={{ color: '#64748b' }}>注册时间：</span><strong>{profile.createdAt ? new Date(profile.createdAt).toLocaleDateString('zh-CN') : '—'}</strong></Col>
+                <Col span={24}>
+                  <span style={{ color: '#64748b' }}>邮箱：</span>
+                  <strong>{profile.email || '—'}</strong>
+                  {profile.emailVerified === 1
+                    ? <Tag color="success" style={{ marginLeft: 8 }}>已验证</Tag>
+                    : <Tag color="warning" style={{ marginLeft: 8 }}>未验证</Tag>}
+                  <Button type="link" size="small" icon={<MailOutlined />} onClick={() => {
+                    bindForm.setFieldsValue({ email: profile.email || '' })
+                    setBindOpen(true)
+                  }}>
+                    {profile.emailVerified === 1 ? '更换邮箱' : '绑定邮箱'}
+                  </Button>
+                </Col>
+                <Col span={24}><span style={{ color: '#64748b' }}>注册时间：</span><strong>{profile.createTime ? new Date(profile.createTime).toLocaleDateString('zh-CN') : '—'}</strong></Col>
                 <Col span={24}><span style={{ color: '#64748b' }}>角色：</span><Tag color={profile.role === 1 ? 'blue' : 'default'}>{profile.role === 1 ? '管理员' : '普通用户'}</Tag></Col>
                 <Col span={24}><span style={{ color: '#64748b' }}>账号状态：</span><Tag color="success">正常</Tag></Col>
               </Row>
@@ -164,6 +210,31 @@ export default function Profile() {
           <Table rowKey="addressId" dataSource={addresses} columns={addrColumns} pagination={false} />
         )}
       </Card>
+
+      <Modal
+        title={<><SafetyCertificateOutlined /> 绑定/更换邮箱</>}
+        open={bindOpen}
+        onCancel={() => setBindOpen(false)}
+        footer={null}
+        destroyOnClose
+      >
+        <Form form={bindForm} layout="vertical" onFinish={submitBind}>
+          <Form.Item name="email" label="新邮箱" rules={[{ required: true, type: 'email', message: '请输入有效邮箱' }]}>
+            <Input placeholder="your@email.com" />
+          </Form.Item>
+          <Form.Item label="验证码" required>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <Form.Item name="code" noStyle rules={[{ required: true, len: 6, message: '请输入6位验证码' }]}>
+                <Input placeholder="6位验证码" maxLength={6} style={{ flex: 1 }} />
+              </Form.Item>
+              <Button onClick={sendCode} loading={codeLoading} disabled={countdown > 0} style={{ minWidth: 120 }}>
+                {countdown > 0 ? `${countdown}s` : '获取验证码'}
+              </Button>
+            </div>
+          </Form.Item>
+          <Button type="primary" htmlType="submit" block>确认绑定</Button>
+        </Form>
+      </Modal>
     </div>
   )
 }

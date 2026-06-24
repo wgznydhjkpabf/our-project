@@ -22,8 +22,8 @@
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="userId">
-        INSERT INTO sys_user(student_no, email, password, nickname, college, credit_score, role, status)
-        VALUES(#{studentNo}, #{email}, #{password}, #{nickname}, #{college}, 5.00, #{role}, 1)
+        INSERT INTO sys_user(student_no, email, email_verified, password, nickname, college, credit_score, role, status)
+        VALUES(#{studentNo}, #{email}, #{emailVerified}, #{password}, #{nickname}, #{college}, 5.00, #{role}, 1)
     </insert>
 
     <update id="updateProfile">
@@ -38,6 +38,11 @@
 
     <update id="updateCreditScore">
         UPDATE sys_user SET credit_score = #{creditScore} WHERE user_id = #{userId}
+    </update>
+
+    <update id="updateEmail">
+        UPDATE sys_user SET email = #{email}, email_verified = #{emailVerified}, update_time = NOW()
+        WHERE user_id = #{userId}
     </update>
 
     <select id="countAll" resultType="int">

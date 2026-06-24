@@ -21,6 +21,8 @@ public interface UserMapper {
 
     int updateCreditScore(@Param("userId") Long userId, @Param("creditScore") java.math.BigDecimal creditScore);
 
+    int updateEmail(@Param("userId") Long userId, @Param("email") String email, @Param("emailVerified") Integer emailVerified);
+
     int countAll();
 
     java.util.List<User> findAll();

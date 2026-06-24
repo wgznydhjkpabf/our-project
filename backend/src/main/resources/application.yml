@@ -13,6 +13,17 @@ spring:
     multipart:
       max-file-size: 5MB
       max-request-size: 10MB
+  mail:
+    host: ${MAIL_HOST:}
+    port: ${MAIL_PORT:465}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
@@ -26,6 +37,8 @@ app:
     expiration-ms: 86400000
   upload:
     dir: uploads
+  mail:
+    enabled: false
 
 websocket:
   allowed-origins: "*"
