@@ -16,23 +16,30 @@ public class AuthService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final EmailVerifyService emailVerifyService;
 
-    public AuthService(UserMapper userMapper, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+    public AuthService(UserMapper userMapper, PasswordEncoder passwordEncoder, JwtUtil jwtUtil,
+                       EmailVerifyService emailVerifyService) {
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
+        this.emailVerifyService = emailVerifyService;
     }
 
     public void register(RegisterRequest request) {
         if (userMapper.findByStudentNo(request.getStudentNo()) != null) {
             throw new BusinessException("学号已注册");
         }
-        if (userMapper.findByEmail(request.getEmail()) != null) {
+        String email = request.getEmail().trim().toLowerCase();
+        if (userMapper.findByEmail(email) != null) {
             throw new BusinessException("邮箱已注册");
         }
+        emailVerifyService.verifyForRegister(email, request.getVerifyCode());
+
         User user = new User();
         user.setStudentNo(request.getStudentNo());
-        user.setEmail(request.getEmail());
+        user.setEmail(email);
+        user.setEmailVerified(1);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setNickname(request.getNickname());
         user.setCollege(request.getCollege());

@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Form, Input, Button, message } from "antd";
+import { useState } from "react";
 import {
   UserOutlined,
   MailOutlined,
@@ -11,7 +12,7 @@ import {
   GiftOutlined,
   StarOutlined,
 } from "@ant-design/icons";
-import { register } from "../api";
+import { register, sendRegisterEmailCode } from "../api";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -164,6 +165,22 @@ export default function Register() {
               />
             </Form.Item>
 
+            <Form.Item label="邮箱验证码" required>
+              <div style={{ display: "flex", gap: 8 }}>
+                <Form.Item
+                  name="verifyCode"
+                  noStyle
+                  rules={[
+                    { required: true, message: "请输入验证码" },
+                    { len: 6, message: "验证码为6位数字" },
+                  ]}
+                >
+                  <Input placeholder="6位验证码" maxLength={6} style={{ flex: 1 }} />
+                </Form.Item>
+                <SendCodeButton form={form} />
+              </div>
+            </Form.Item>
+
             <Form.Item
               name="nickname"
               label="昵称"
@@ -279,5 +296,41 @@ function MiniStat({ label, value }) {
         {label}
       </div>
     </div>
+  );
+}
+
+function SendCodeButton({ form }) {
+  const [loading, setLoading] = useState(false);
+  const [countdown, setCountdown] = useState(0);
+
+  const send = async () => {
+    try {
+      const email = form.getFieldValue("email");
+      if (!email) {
+        message.warning("请先填写邮箱");
+        return;
+      }
+      setLoading(true);
+      await sendRegisterEmailCode({ email, scene: "register" });
+      message.success("验证码已发送，请查收邮箱（开发模式请看后端控制台）");
+      setCountdown(60);
+      const timer = setInterval(() => {
+        setCountdown(c => {
+          if (c <= 1) {
+            clearInterval(timer);
+            return 0;
+          }
+          return c - 1;
+        });
+      }, 1000);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Button onClick={send} loading={loading} disabled={countdown > 0} style={{ minWidth: 120 }}>
+      {countdown > 0 ? `${countdown}s` : "获取验证码"}
+    </Button>
   );
 }

@@ -9,6 +9,7 @@ CREATE TABLE sys_user (
   user_id      BIGINT PRIMARY KEY AUTO_INCREMENT,
   student_no   VARCHAR(20)  NOT NULL UNIQUE,
   email        VARCHAR(100) NOT NULL UNIQUE,
+  email_verified TINYINT    NOT NULL DEFAULT 0 COMMENT '0未验证 1已验证',
   password     VARCHAR(255) NOT NULL,
   nickname     VARCHAR(50)  NOT NULL,
   avatar       VARCHAR(255) DEFAULT NULL,
@@ -99,6 +100,18 @@ CREATE TABLE user_address (
   is_default TINYINT      DEFAULT 0,
   CONSTRAINT fk_address_user FOREIGN KEY (user_id) REFERENCES sys_user(user_id)
 ) ENGINE=InnoDB COMMENT='地址表';
+
+CREATE TABLE email_verify_code (
+  id          BIGINT PRIMARY KEY AUTO_INCREMENT,
+  email       VARCHAR(100) NOT NULL,
+  code        VARCHAR(6)   NOT NULL,
+  scene       VARCHAR(20)  NOT NULL COMMENT 'register/bind',
+  user_id     BIGINT       DEFAULT NULL,
+  expire_time DATETIME     NOT NULL,
+  used        TINYINT      NOT NULL DEFAULT 0,
+  create_time DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_email_scene (email, scene)
+) ENGINE=InnoDB COMMENT='邮箱验证码';
 
 INSERT INTO goods_category (name, sort_order) VALUES
 ('教材书籍', 1), ('电子产品', 2), ('生活用品', 3),

@@ -2,6 +2,7 @@ package com.campus.trade.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class RegisterRequest {
@@ -22,6 +23,10 @@ public class RegisterRequest {
 
     private String college;
 
+    @NotBlank(message = "邮箱验证码不能为空")
+    @Pattern(regexp = "^\\d{6}$", message = "验证码为6位数字")
+    private String verifyCode;
+
     public String getStudentNo() { return studentNo; }
     public void setStudentNo(String studentNo) { this.studentNo = studentNo; }
     public String getEmail() { return email; }
@@ -32,4 +37,6 @@ public class RegisterRequest {
     public void setNickname(String nickname) { this.nickname = nickname; }
     public String getCollege() { return college; }
     public void setCollege(String college) { this.college = college; }
+    public String getVerifyCode() { return verifyCode; }
+    public void setVerifyCode(String verifyCode) { this.verifyCode = verifyCode; }
 }

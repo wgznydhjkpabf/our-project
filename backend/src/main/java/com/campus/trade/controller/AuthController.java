@@ -4,8 +4,10 @@ import com.campus.trade.common.Result;
 import com.campus.trade.dto.LoginRequest;
 import com.campus.trade.dto.LoginResponse;
 import com.campus.trade.dto.RegisterRequest;
+import com.campus.trade.dto.SendEmailCodeRequest;
 import com.campus.trade.entity.User;
 import com.campus.trade.service.AuthService;
+import com.campus.trade.service.EmailVerifyService;
 import com.campus.trade.util.SecurityUtils;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +17,18 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final EmailVerifyService emailVerifyService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, EmailVerifyService emailVerifyService) {
         this.authService = authService;
+        this.emailVerifyService = emailVerifyService;
+    }
+
+    @PostMapping("/email/send-code")
+    public Result<Void> sendRegisterCode(@Valid @RequestBody SendEmailCodeRequest request) {
+        request.setScene("register");
+        emailVerifyService.sendCode(request, null);
+        return Result.ok("验证码已发送", null);
     }
 
     @PostMapping("/register")

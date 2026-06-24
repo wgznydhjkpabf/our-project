@@ -3,7 +3,6 @@ package com.campus.trade.service;
 import com.campus.trade.common.BusinessException;
 import com.campus.trade.dto.GoodsRequest;
 import com.campus.trade.entity.Goods;
-import com.campus.trade.entity.MessageType;
 import com.campus.trade.mapper.GoodsMapper;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +14,9 @@ import java.util.Map;
 public class GoodsService {
 
     private final GoodsMapper goodsMapper;
-    private final MessageService messageService;
 
-    public GoodsService(GoodsMapper goodsMapper, MessageService messageService) {
+    public GoodsService(GoodsMapper goodsMapper) {
         this.goodsMapper = goodsMapper;
-        this.messageService = messageService;
     }
 
     public Map<String, Object> list(String keyword, Integer categoryId, Integer status,
@@ -73,11 +70,6 @@ public class GoodsService {
             throw new BusinessException("商品不存在");
         }
         goodsMapper.updateStatus(goodsId, pass ? 1 : 3);
-
-        MessageType messageType = pass ? MessageType.GOODS_AUDIT_PASS : MessageType.GOODS_AUDIT_REJECT;
-        String content = pass ? String.format("您的商品「%s」已审核通过，现在可以正常出售", goods.getTitle())
-                : String.format("您的商品「%s」审核未通过，请修改后重新提交", goods.getTitle());
-        messageService.sendSystemMessage(goods.getUserId(), goods.getGoodsId(), null, messageType, content);
     }
 
     private Goods requireOwnerGoods(Long userId, Long goodsId) {

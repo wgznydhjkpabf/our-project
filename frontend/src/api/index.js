@@ -2,6 +2,9 @@ import request from './request'
 
 export const login = data => request.post('/api/auth/login', data)
 export const register = data => request.post('/api/auth/register', data)
+export const sendRegisterEmailCode = data => request.post('/api/auth/email/send-code', data)
+export const sendBindEmailCode = data => request.post('/api/user/email/send-code', data)
+export const bindEmail = data => request.post('/api/user/email/bind', data)
 export const getProfile = () => request.get('/api/auth/profile')
 export const updateProfile = data => request.put('/api/auth/profile', data)
 
