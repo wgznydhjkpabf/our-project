@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campus.trade.mapper.GoodsMapper">
+
+    <sql id="goodsSelect">
+        SELECT g.*, u.nickname AS seller_nickname, u.credit_score AS seller_credit_score,
+               c.name AS category_name
+        FROM goods g
+        JOIN sys_user u ON g.user_id = u.user_id
+        JOIN goods_category c ON g.category_id = c.category_id
+    </sql>
+
+    <select id="findById" resultType="Goods">
+        <include refid="goodsSelect"/>
+        WHERE g.goods_id = #{goodsId}
+    </select>
+
+    <select id="search" resultType="Goods">
+        <include refid="goodsSelect"/>
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (g.title LIKE CONCAT('%', #{keyword}, '%')
+                OR g.description LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="categoryId != null">AND g.category_id = #{categoryId}</if>
+            <if test="status != null">AND g.status = #{status}</if>
+            <if test="userId != null">AND g.user_id = #{userId}</if>
+        </where>
+        ORDER BY g.create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countSearch" resultType="int">
+        SELECT COUNT(*) FROM goods g
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (g.title LIKE CONCAT('%', #{keyword}, '%')
+                OR g.description LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="categoryId != null">AND g.category_id = #{categoryId}</if>
+            <if test="status != null">AND g.status = #{status}</if>
+            <if test="userId != null">AND g.user_id = #{userId}</if>
+        </where>
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="goodsId">
+        INSERT INTO goods(user_id, category_id, title, description, price, original_price,
+                          condition_level, images, trade_location, status)
+        VALUES(#{userId}, #{categoryId}, #{title}, #{description}, #{price}, #{originalPrice},
+               #{conditionLevel}, #{images}, #{tradeLocation}, #{status})
+    </insert>
+
+    <update id="update">
+        UPDATE goods
+        SET category_id = #{categoryId}, title = #{title}, description = #{description},
+            price = #{price}, original_price = #{originalPrice}, condition_level = #{conditionLevel},
+            images = #{images}, trade_location = #{tradeLocation}, status = #{status}
+        WHERE goods_id = #{goodsId}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE goods SET status = #{status} WHERE goods_id = #{goodsId}
+    </update>
+
+    <update id="increaseViewCount">
+        UPDATE goods SET view_count = view_count + 1 WHERE goods_id = #{goodsId}
+    </update>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM goods
+    </select>
+
+    <select id="countByStatus" resultType="int">
+        SELECT COUNT(*) FROM goods WHERE status = #{status}
+    </select>
+</mapper>

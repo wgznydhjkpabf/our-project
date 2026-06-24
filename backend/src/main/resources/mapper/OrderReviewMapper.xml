@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campus.trade.mapper.OrderReviewMapper">
+
+    <select id="findByOrderId" resultType="OrderReview">
+        SELECT * FROM order_review WHERE order_id = #{orderId}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="reviewId">
+        INSERT INTO order_review(order_id, reviewer_id, rating, content)
+        VALUES(#{orderId}, #{reviewerId}, #{rating}, #{content})
+    </insert>
+
+    <select id="avgRatingBySeller" resultType="java.math.BigDecimal">
+        SELECT IFNULL(AVG(r.rating), 5.00)
+        FROM order_review r
+        JOIN trade_order o ON r.order_id = o.order_id
+        WHERE o.seller_id = #{sellerId}
+    </select>
+</mapper>

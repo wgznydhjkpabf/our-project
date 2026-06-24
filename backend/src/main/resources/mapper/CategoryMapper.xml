@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campus.trade.mapper.CategoryMapper">
+
+    <select id="findAll" resultType="Category">
+        SELECT * FROM goods_category WHERE status = 1 ORDER BY sort_order
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="categoryId">
+        INSERT INTO goods_category(name, sort_order, status) VALUES(#{name}, #{sortOrder}, 1)
+    </insert>
+
+    <update id="update">
+        UPDATE goods_category SET name = #{name}, sort_order = #{sortOrder} WHERE category_id = #{categoryId}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM goods_category WHERE category_id = #{categoryId}
+    </delete>
+</mapper>

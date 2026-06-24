@@ -1,0 +1,8 @@
+uploads/
+*.class
+target/
+.idea/
+*.iml
+node_modules/
+dist/
+.DS_Store
