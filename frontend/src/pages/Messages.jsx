@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Input, Button, message, Empty } from 'antd'
 import { SendOutlined, WechatOutlined } from '@ant-design/icons'
-import { getMessages, getConversation, sendMessage, getAuth } from '../api'
+import { getConversations, getConversation, sendMessage, getAuth } from '../api'
 
 export default function Messages() {
   const { userId } = getAuth()
@@ -12,7 +12,7 @@ export default function Messages() {
   const [content, setContent] = useState('')
   const [newPeerId, setNewPeerId] = useState('')
 
-  const loadInbox = async () => setInbox(await getMessages())
+  const loadInbox = async () => setInbox(await getConversations())
   const loadChat = async id => {
     if (!id) return
     const chat = await getConversation(id)
@@ -120,7 +120,7 @@ export default function Messages() {
                     return (
                       <div key={m.messageId} className={`chat-msg ${isMine ? 'mine' : 'other'}`}>
                         <span className="sender" style={{ fontSize: 11, opacity: 0.7 }}>
-                          {isMine ? '我' : (m.senderNickname || '对方')} · {new Date(m.createdAt).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                          {isMine ? '我' : (m.senderNickname || '对方')} · {new Date(m.createTime).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
                         </span>
                         <div>{m.content}</div>
                       </div>
