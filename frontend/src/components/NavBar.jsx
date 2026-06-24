@@ -21,6 +21,7 @@ export default function NavBar() {
   const showMyGoods = token
   const showOrders = token
   const showMessages = token
+  const showFavorites = token
   const showAdmin = token && role === 1
 
   return (
@@ -44,6 +45,9 @@ export default function NavBar() {
           )}
           {showMessages && (
             <Link to="/messages" className={`nav-link ${isActive('/messages') ? 'active' : ''}`}>💬 消息</Link>
+          )}
+          {showFavorites && (
+            <Link to="/my-favorites" className={`nav-link ${isActive('/my-favorites') ? 'active' : ''}`}>❤️ 我的收藏</Link>
           )}
           {showAdmin && (
             <Link to="/admin" className={`nav-link ${isActive('/admin') ? 'active' : ''}`}>⚙️ 管理后台</Link>

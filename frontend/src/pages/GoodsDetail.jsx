@@ -17,6 +17,8 @@ import {
   MessageOutlined,
   EnvironmentOutlined,
   UserOutlined,
+  HeartOutlined,
+  HeartFilled,
 } from "@ant-design/icons";
 import {
   getGoodsDetail,
@@ -25,6 +27,8 @@ import {
   getAuth,
   parseImages,
   statusText,
+  toggleFavorite,
+  getFavoriteStatus,
 } from "../api";
 
 export default function GoodsDetail() {
@@ -34,12 +38,21 @@ export default function GoodsDetail() {
   const [goods, setGoods] = useState(null);
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
+  const [isFavorited, setIsFavorited] = useState(false);
 
   useEffect(() => {
     getGoodsDetail(id)
       .then(setGoods)
       .catch(() => setGoods(null));
   }, [id]);
+
+  useEffect(() => {
+    if (token && goods) {
+      getFavoriteStatus(goods.goodsId)
+        .then(res => setIsFavorited(res !== undefined ? res : false))
+        .catch(() => setIsFavorited(false));
+    }
+  }, [token, goods]);
 
   if (!goods) {
     return (
@@ -77,6 +90,16 @@ export default function GoodsDetail() {
       navigate("/messages");
     } catch (e) {
       message.error(e?.message || "发送失败");
+    }
+  };
+
+  const handleFavorite = async () => {
+    try {
+      await toggleFavorite(goods.goodsId);
+      setIsFavorited(!isFavorited);
+      message.success(isFavorited ? "已取消收藏" : "收藏成功");
+    } catch (e) {
+      message.error(e?.message || "操作失败");
     }
   };
 
@@ -218,6 +241,17 @@ export default function GoodsDetail() {
                     onClick={contactSeller}
                   >
                     联系卖家
+                  </Button>
+                  <Button
+                    size="large"
+                    icon={isFavorited ? <HeartFilled /> : <HeartOutlined />}
+                    onClick={handleFavorite}
+                    style={{
+                      color: isFavorited ? "#ef4444" : undefined,
+                      borderColor: isFavorited ? "#ef4444" : undefined,
+                    }}
+                  >
+                    {isFavorited ? "已收藏" : "收藏"}
                   </Button>
                 </div>
               )}

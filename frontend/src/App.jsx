@@ -11,6 +11,7 @@ import MyGoods from './pages/MyGoods'
 import Orders from './pages/Orders'
 import Profile from './pages/Profile'
 import Messages from './pages/Messages'
+import MyFavorites from './pages/MyFavorites'
 import Admin from './pages/Admin'
 
 const { Content } = Layout
@@ -31,6 +32,7 @@ export default function App() {
             <Route path="/my-orders" element={<PrivateRoute><Orders /></PrivateRoute>} />
             <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
             <Route path="/messages" element={<PrivateRoute><Messages /></PrivateRoute>} />
+            <Route path="/my-favorites" element={<PrivateRoute><MyFavorites /></PrivateRoute>} />
             <Route path="/admin" element={<PrivateRoute admin><Admin /></PrivateRoute>} />
           </Routes>
         </Content>
