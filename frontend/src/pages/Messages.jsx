@@ -132,8 +132,6 @@ export default function Messages() {
     <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 64px)', width: '100%', borderRadius: '0', overflow: 'hidden', border: 'none', boxShadow: 'none', backgroundColor: '#fff', position: 'fixed', top: '64px', left: '0', zIndex: '1' }}>
       <div style={{ padding: '20px 24px', borderBottom: '1px solid #e2e8f0', fontSize: '18px', fontWeight: 700, backgroundColor: '#fff' }}>
         <WechatOutlined style={{ color: '#2563eb', marginRight: 8 }} /> 消息中心
-        {isConnected && <span style={{ marginLeft: '12px', fontSize: '12px', color: '#22c55e' }}>🟢 在线</span>}
-        {!isConnected && <span style={{ marginLeft: '12px', fontSize: '12px', color: '#ef4444' }}>🔴 离线</span>}
       </div>
 
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
