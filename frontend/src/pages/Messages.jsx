@@ -81,13 +81,29 @@ export default function Messages() {
               {inbox.map(msg => {
                 const peer = msg.senderId === Number(userId) ? msg.receiverId : msg.senderId
                 const name = msg.senderId === Number(userId) ? msg.receiverNickname : msg.senderNickname
+                const unread = msg.unreadCount || 0
                 return (
                   <div
                     key={peer}
                     className={`message-item ${peerId === peer ? 'active' : ''}`}
                     onClick={() => selectPeer(peer, name)}
                   >
-                    <div className="peer-name">👤 {name}</div>
+                    <div className="peer-name">
+                      👤 {name}
+                      {unread > 0 && (
+                        <span style={{
+                          marginLeft: 8,
+                          padding: '2px 6px',
+                          background: '#ef4444',
+                          color: '#fff',
+                          fontSize: 11,
+                          borderRadius: 10,
+                          fontWeight: 500
+                        }}>
+                          {unread > 99 ? '99+' : unread}
+                        </span>
+                      )}
+                    </div>
                     <div className="preview">{msg.content}</div>
                   </div>
                 )
