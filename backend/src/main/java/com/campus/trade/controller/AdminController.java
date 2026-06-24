@@ -54,7 +54,7 @@ public class AdminController {
     public Result<Map<String, Object>> pendingGoods(@RequestParam(defaultValue = "1") int page,
                                                     @RequestParam(defaultValue = "10") int size) {
         requireAdmin();
-        return Result.ok(goodsService.list(null, null, 0, null, page, size));
+        return Result.ok(goodsService.list(null, null, 0, null, null, page, size));
     }
 
     @PutMapping("/goods/{id}/audit")

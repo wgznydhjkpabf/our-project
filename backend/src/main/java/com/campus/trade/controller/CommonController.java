@@ -1,13 +1,10 @@
 package com.campus.trade.controller;
 
 import com.campus.trade.common.Result;
-import com.campus.trade.dto.MessageRequest;
 import com.campus.trade.entity.Category;
 import com.campus.trade.entity.UserAddress;
-import com.campus.trade.entity.UserMessage;
 import com.campus.trade.service.CommonService;
 import com.campus.trade.util.SecurityUtils;
-import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,22 +21,6 @@ public class CommonController {
     @GetMapping("/api/categories")
     public Result<List<Category>> categories() {
         return Result.ok(commonService.categories());
-    }
-
-    @GetMapping("/api/messages")
-    public Result<List<UserMessage>> inbox() {
-        return Result.ok(commonService.inbox(SecurityUtils.currentUserId()));
-    }
-
-    @GetMapping("/api/messages/{peerId}")
-    public Result<List<UserMessage>> conversation(@PathVariable Long peerId) {
-        return Result.ok(commonService.conversation(SecurityUtils.currentUserId(), peerId));
-    }
-
-    @PostMapping("/api/messages")
-    public Result<Void> send(@Valid @RequestBody MessageRequest request) {
-        commonService.sendMessage(SecurityUtils.currentUserId(), request);
-        return Result.ok("发送成功", null);
     }
 
     @GetMapping("/api/addresses")

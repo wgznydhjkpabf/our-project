@@ -31,4 +31,51 @@
         UPDATE user_message SET is_read = 1
         WHERE message_id = #{messageId} AND receiver_id = #{userId}
     </update>
+
+    <update id="markConversationRead">
+        UPDATE user_message SET is_read = 1
+        WHERE receiver_id = #{userId} AND sender_id = #{peerId} AND is_read = 0
+    </update>
+
+    <update id="markAllRead">
+        UPDATE user_message SET is_read = 1
+        WHERE receiver_id = #{userId} AND is_read = 0
+    </update>
+
+    <select id="countUnread" resultType="int">
+        SELECT COUNT(*) FROM user_message
+        WHERE receiver_id = #{userId} AND is_read = 0
+    </select>
+
+    <select id="findConversations" resultType="UserMessage">
+        SELECT m.*, s.nickname AS sender_nickname, s.avatar AS sender_avatar,
+               r.nickname AS receiver_nickname, g.title AS goods_title,
+               (SELECT COUNT(*) FROM user_message um 
+                WHERE um.receiver_id = #{userId} AND um.is_read = 0 
+                AND um.sender_id = CASE WHEN m.sender_id = #{userId} THEN m.receiver_id ELSE m.sender_id END) AS unreadCount
+        FROM user_message m
+        LEFT JOIN sys_user s ON m.sender_id = s.user_id
+        LEFT JOIN sys_user r ON m.receiver_id = r.user_id
+        LEFT JOIN goods g ON m.goods_id = g.goods_id
+        WHERE m.message_id IN (
+            SELECT MAX(message_id) FROM user_message
+            WHERE sender_id = #{userId} OR receiver_id = #{userId}
+            GROUP BY LEAST(sender_id, receiver_id), GREATEST(sender_id, receiver_id)
+        )
+        ORDER BY m.create_time DESC
+    </select>
+
+    <delete id="deleteByConversation">
+        DELETE FROM user_message
+        WHERE (sender_id = #{userId} AND receiver_id = #{peerId})
+           OR (sender_id = #{peerId} AND receiver_id = #{userId})
+    </delete>
+
+    <select id="selectById" resultType="UserMessage">
+        SELECT m.*, s.nickname AS sender_nickname, r.nickname AS receiver_nickname
+        FROM user_message m
+        LEFT JOIN sys_user s ON m.sender_id = s.user_id
+        LEFT JOIN sys_user r ON m.receiver_id = r.user_id
+        WHERE m.message_id = #{messageId}
+    </select>
 </mapper>

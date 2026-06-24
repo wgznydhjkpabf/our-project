@@ -11,7 +11,19 @@ public interface MessageMapper {
 
     List<UserMessage> findInbox(@Param("userId") Long userId);
 
+    List<UserMessage> findConversations(@Param("userId") Long userId);
+
     int insert(UserMessage message);
 
     int markRead(@Param("messageId") Long messageId, @Param("userId") Long userId);
+
+    int markConversationRead(@Param("userId") Long userId, @Param("peerId") Long peerId);
+
+    int markAllRead(@Param("userId") Long userId);
+
+    int countUnread(@Param("userId") Long userId);
+
+    int deleteByConversation(@Param("userId") Long userId, @Param("peerId") Long peerId);
+
+    UserMessage selectById(@Param("messageId") Long messageId);
 }
